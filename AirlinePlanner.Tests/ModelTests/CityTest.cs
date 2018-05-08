@@ -14,8 +14,15 @@ namespace AirlinePlanner.Tests
    {
        public ItemTests()
        {
-           DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=8889;database=airline_planner;";
+           DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=8889;database=airline_planner_test;";
        }
+
+       public void Dispose()
+       {
+         City.DeleteAll();
+         Flight.DeleteAll();
+       }
+
        [TestMethod]
        public void Save_SavesItemToDatabase_CityList()
        {
@@ -23,9 +30,31 @@ namespace AirlinePlanner.Tests
          testCity.Save();
 
          List<City> testResult = City.GetAllCities();
-         List<City> allCities = new List<City> {testCity};
+         List<City> allCities = new List<City>{testCity};
 
-         Collection.Assert.AreEqual(testResult, allCities);
+         CollectionAssert.AreEqual(allCities, testResult);
+
+       }
+
+       [TestMethod]
+       public void Add_FlightsToACity_JoinTable()
+       {
+         //Arrange
+         City testCity = new City("Boston", "United");
+         testCity.Save();
+
+         Flight testFlight = new Flight("UA412", "2018-12-31", "Boston", "Seattle", "On-time");
+         testFlight.Save();
+
+         //Act
+         testCity.AddFlightsToCity(testFlight);
+
+         List<Flight> result = testCity.GetFlights();
+         List<Flight> testList = new List<Flight> {testFlight};
+         Console.WriteLine(result.Count);
+         Console.WriteLine(Flight.GetAllFlights().Count);
+         //Assert
+         CollectionAssert.AreEqual(result, testList);
 
        }
     }

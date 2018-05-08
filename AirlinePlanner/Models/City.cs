@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
-using AirlinePlanner.Models;
+using AirlinePlanner;
+using MySql.Data.MySqlClient;
 
-namespace AirlinePlanner
+
+namespace AirlinePlanner.Models
 {
-  class City
+  public class City
   {
     private int _id;
     private string _name;
@@ -33,29 +35,22 @@ namespace AirlinePlanner
       return _id;
     }
 
-    public static List<City> GetAllCities()
+    public override bool Equals(System.Object otherCity)
     {
-      List<City> allCities = new List<City>{};
-      MySqlConnection conn = DB.Connection();
-      conn.Open();
-      MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText= @"SELECT * FROM cities;";
+      if (!(otherCity is City))
+      {
+        return false;
+      }
+      else
+      {
+        City newCity = (City) otherCity;
+        return this.GetName().Equals(newCity.GetName());
+      }
+    }
 
-      var rdr = cmd.ExecuteReader() as MySqlDataReader;
-      while (rdr.Read())
-      {
-        int id = rdr.GetInt32(0);
-        string name = rdr.GetString(1);
-        string airline = rdr.GetString(2);
-        City newCity = new City(name, airline, id);
-        allCities.Add(newCity);
-      }
-      conn.Close();
-      if (conn != null)
-      {
-        conn.Dispose();
-      }
-      return allCities;
+    public override int GetHashCode()
+    {
+         return this.GetName().GetHashCode();
     }
 
     public void Save()
@@ -72,7 +67,7 @@ namespace AirlinePlanner
       cmd.Parameters.Add(name);
 
       MySqlParameter airline = new MySqlParameter();
-      airline.ParameterName = "@thisName";
+      airline.ParameterName = "@thisAirline";
       airline.Value = this._airline;
       cmd.Parameters.Add(airline);
 
@@ -84,6 +79,132 @@ namespace AirlinePlanner
       {
         conn.Dispose();
       }
+    }
+
+    public static List<City> GetAllCities()
+    {
+      List<City> allCities = new List<City>{};
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+      MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText= @"SELECT * FROM cities;";
+
+      MySqlDataReader rdr = cmd.ExecuteReader() as MySqlDataReader;
+      while (rdr.Read())
+      {
+        int id = rdr.GetInt32(0);
+        string name = rdr.GetString(1);
+        string airline = rdr.GetString(2);
+        City newCity = new City(name, airline, id);
+        allCities.Add(newCity);
+      }
+      conn.Close();
+      if (conn != null)
+      {
+        conn.Dispose();
+      }
+      return allCities;
+    }
+
+    public void Delete()
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+      var cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"DELETE FROM cities WHERE id = @Cityd;
+      DELETE FROM cities_flights
+      WHERE city_id = @CityId;";
+
+      MySqlParameter cityIdParameter = new MySqlParameter();
+      cityIdParameter.ParameterName = "@CityId";
+      cityIdParameter.Value = this.GetCityId();
+      cmd.Parameters.Add(cityIdParameter);
+
+      cmd.ExecuteNonQuery();
+      if (conn != null)
+      {
+        conn.Close();
+      }
+    }
+
+    public static void DeleteAll()
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+      MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"DELETE FROM cities;";
+      cmd.ExecuteNonQuery();
+      conn.Close();
+      if (conn != null)
+      {
+          conn.Dispose();
+      }
+
+    }
+
+    public void AddFlightsToCity(Flight newFlight)
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+      MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText= @"INSERT INTO cities_flights (cities_id, flights_id) VALUES (@CitiesId, @FlightsId);";
+
+      MySqlParameter cities_id = new MySqlParameter();
+      cities_id.ParameterName = "@CitiesId";
+      cities_id.Value = _id;
+      cmd.Parameters.Add(cities_id);
+
+      MySqlParameter flights_id = new MySqlParameter();
+      flights_id.ParameterName = "@FlightsId";
+      flights_id.Value = newFlight.GetId();
+      cmd.Parameters.Add(flights_id);
+      cmd.ExecuteNonQuery();
+
+      conn.Close();
+      if (conn != null)
+      {
+        conn.Dispose();
+      }
+
+    }
+
+    public List<Flight> GetFlights()
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+      MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"SELECT flights.* FROM cities
+      JOIN cities_flights ON (cities.id = cities_flights.cities_id)
+      JOIN flights ON (cities_flights.flights_id = flights.id)
+      WHERE cities.id = @cityId;";
+
+      MySqlParameter cityIdParameter = new MySqlParameter();
+      cityIdParameter.ParameterName = "@cityId";
+      cityIdParameter.Value = _id;
+      cmd.Parameters.Add(cityIdParameter);
+
+      MySqlDataReader rdr = cmd.ExecuteReader() as MySqlDataReader;
+
+      List<Flight> flights = new List<Flight> {};
+      while (rdr.Read())
+      {
+        int id = rdr.GetInt32(0);
+        string name = rdr.GetString(1);
+        string date = rdr.GetString(2);
+        string deptCity = rdr.GetString(3);
+        string arrCity = rdr.GetString(4);
+        string status = rdr.GetString(5);
+        Flight newFlight = new Flight(name, date, deptCity, arrCity, status, id);
+        flights.Add(newFlight);
+      }
+
+      conn.Close();
+      if (conn != null)
+      {
+        conn.Dispose();
+      }
+      return flights;
+
 
     }
   }

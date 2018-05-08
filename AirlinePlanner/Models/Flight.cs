@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using AirlinePlanner.Models;
+using AirlinePlanner;
+using MySql.Data.MySqlClient;
 
-namespace AirlinePlanner
+namespace AirlinePlanner.Models
 {
   public class Flight
   {
@@ -22,7 +23,7 @@ namespace AirlinePlanner
       _status = status;
       _id = id;
     }
-    public string GetFlightName()
+    public string GetName()
     {
       return _flightName;
     }
@@ -46,9 +47,50 @@ namespace AirlinePlanner
     {
       return _id;
     }
+
+    public override bool Equals(System.Object otherFlight)
+    {
+      if (!(otherFlight is Flight))
+      {
+        return false;
+      }
+      else
+      {
+        Flight newFlight = (Flight) otherFlight;
+        return this.GetName().Equals(newFlight.GetName());
+      }
+    }
+
+    public override int GetHashCode()
+    {
+         return this.GetName().GetHashCode();
+    }
+
+    public void Save()
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+      MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"INSERT INTO flights (flight_name, date, dept_city, arrival_city, status) VALUES (@thisName, @thisDate, @thisDeparture, @thisArrival, @thisStatus);";
+
+      cmd.Parameters.Add(new MySqlParameter("@thisName", _flightName));
+      cmd.Parameters.Add(new MySqlParameter("@thisDate", _date));
+      cmd.Parameters.Add(new MySqlParameter("@thisDeparture", _deptCity));
+      cmd.Parameters.Add(new MySqlParameter("@thisArrival", _arrivalCity));
+      cmd.Parameters.Add(new MySqlParameter("@thisStatus", _status));
+
+      cmd.ExecuteNonQuery();
+      _id = (int) cmd.LastInsertedId;
+      conn.Close();
+      if (conn != null)
+      {
+          conn.Dispose();
+      }
+    }
+
     public static List<Flight> GetAllFlights()
     {
-      list<Flight> allFlights = new List<Flight>{};
+      List<Flight> allFlights = new List<Flight> {};
       MySqlConnection conn = DB.Connection();
       conn.Open();
       MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
@@ -74,22 +116,49 @@ namespace AirlinePlanner
       return allFlights;
 
     }
-    public void Save()
+
+
+    public List<City> GetCities()
     {
       MySqlConnection conn = DB.Connection();
       conn.Open();
       MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"INSERT INTO flights (flight_name, flight_date, departure_city, arrival_city, flight_status) VALUES (@thisName, @thisDate, @thisDeparture, @thisArrival, @thisStatus);";
+      cmd.CommandText = @"SELECT cities.* FROM flights
+      JOIN cities_flights ON (flights.id = cities_flights.flights_id)
+      JOIN cities ON (cities_flights.cities_id = cities.id)
+      WHERE flights.id = @FlightId;";
 
-      cmd.Parameters.Add(new MySqlParameter("@thisName", _flightName));
-      cmd.Parameters.Add(new MySqlParameter("@thisDate", _date));
-      cmd.Parameters.Add(new MySqlParameter("@thisDeparture", _deptCity));
-      cmd.Parameters.Add(new MySqlParameter("@thisArrival", _arrivalCity));
-      cmd.Parameters.Add(new MySqlParameter("@thisStatus", _status));
+      MySqlParameter flightIdParameter = new MySqlParameter();
+      flightIdParameter.ParameterName = "@CityId";
+      flightIdParameter.Value = _id;
+      cmd.Parameters.Add(flightIdParameter);
 
+      MySqlDataReader rdr = cmd.ExecuteReader() as MySqlDataReader;
+      List<City> cities = new List<City> {};
+
+      while(rdr.Read())
+      {
+        int cityId = rdr.GetInt32(0);
+        string cityName = rdr.GetString(1);
+        string cityAirline = rdr.GetString(2);
+        City newCity = new City(cityName, cityAirline);
+        cities.Add(newCity);
+      }
+      conn.Close();
+      if (conn != null)
+      {
+        conn.Dispose();
+      }
+      return cities;
+    }
+
+    public static void DeleteAll()
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+      MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"DELETE FROM flights;";
       cmd.ExecuteNonQuery();
-      _id = (int) cmd.LastInsertedId;
-
       conn.Close();
       if (conn != null)
       {
