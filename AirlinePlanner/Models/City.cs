@@ -106,6 +106,39 @@ namespace AirlinePlanner.Models
       return allCities;
     }
 
+    public static City Find(int citiesId)
+    {
+        MySqlConnection conn = DB.Connection();
+        conn.Open();
+        var cmd = conn.CreateCommand() as MySqlCommand;
+        cmd.CommandText = @"SELECT * FROM cities WHERE id = (@searchId);";
+
+        MySqlParameter searchId = new MySqlParameter();
+        searchId.ParameterName = "@searchId";
+        searchId.Value = citiesId;
+        cmd.Parameters.Add(searchId);
+
+        var rdr = cmd.ExecuteReader() as MySqlDataReader;
+        int id = 0;
+        string name = "";
+        string airline = "";
+
+        while(rdr.Read())
+        {
+          id = rdr.GetInt32(0);
+          name = rdr.GetString(1);
+          airline = rdr.GetString(2);
+
+        }
+        City newCity = new City(name, airline, id);
+        conn.Close();
+        if (conn != null)
+        {
+            conn.Dispose();
+        }
+        return newCity;
+    }
+
     public void Delete()
     {
       MySqlConnection conn = DB.Connection();

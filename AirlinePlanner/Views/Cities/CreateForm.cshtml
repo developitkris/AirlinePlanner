@@ -1,0 +1,26 @@
+@{
+  Layout = "_Layout";
+}
+<h3>Cities</h3>
+<h4>Add City</h4>
+
+<form class="form-group" action="/cities" method="post">
+  <select class="form-control" name="city-name">
+    <option value="Seattle">Seattle</option>
+    <option value="Portland">Portland</option>
+    <option value="Los Angeles">Los Angeles</option>
+    <option value="New York">New York</option>
+    <option value="Miami">Miami</option>
+    <option value="Chicago">Chicago</option>
+  </select>
+  <select class="form-control" name="airline-name">
+    <option value="United">United</option>
+    <option value="Delta">Delta</option>
+    <option value="Alaskan">Alaskan</option>
+    <option value="Hawaiian">Hawaiian</option>
+    <option value="JetBlue">JetBlue</option>
+  </select>
+  <button class="btn btn-primary" type="submit" name="button">Submit</button>
+</form>
+
+<h4><a href="/">Return to the home page</a></h4>

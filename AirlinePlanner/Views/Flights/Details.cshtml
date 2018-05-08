@@ -1,0 +1,29 @@
+@{
+  Layout = "_Layout";
+}
+@using AirlinePlanner.Models;
+
+<h3>Flight: @Model["selectedFlight"].GetName()</h3>
+@if (@Model["flightCities"].Count != 0)
+{
+  <h4>Here are the associated cities for this flight:</h4>
+  <ul>
+    @foreach (var city in @Model["flightCities"])
+    {
+      <li>@city.GetName()</li>
+    }
+  </ul>
+}
+  <h4>Associate another city to this flight:</h4>
+  <form class="form-group" action="flights/@Model[selectedFlight].GetCityId()/cities/new" method="post">
+    <label for="city-id">Select a city</label>
+    <select id="city-id" name="city-id" type="text">
+        @foreach (var city in @Model["allCities"])
+        {
+          <option value="@city.GetCityId()">@city.GetName()</option>
+        }
+    </select>
+    <button type="submit" name="button">Submit</button>
+  </form>
+
+  <p><a href="/">Return to the home page</a></p>

@@ -1,0 +1,42 @@
+@{
+  Layout = "_Layout";
+}
+<h3>Flights</h3>
+<h4>Add Flight</h4>
+
+<form class="form-group" action="/flights" method="post">
+  <select class="form-control" name="flight-name">
+    <option value="1">UA129</option>
+    <option value="2">DD434</option>
+    <option value="3">AA100</option>
+    <option value="4">HA970</option>
+    <option value="5">JB119</option>
+    <option value="6">BR745</option>
+  </select>
+  <label for="date"></label>
+  <input type="date" name="date">
+  <select class="form-control" name="dept-city">
+    <option value="Seattle">Seattle</option>
+    <option value="Mexico City">Mexico City</option>
+    <option value="Vancouver">Vancouver</option>
+    <option value="San Francisco">San Francisco</option>
+    <option value="New York">New York</option>
+    <option value="Chicago">Chicago</option>
+  </select>
+  <select class="form-control" name="arrival-city">
+    <option value="Seattle">Seattle</option>
+    <option value="Mexico City">Mexico City</option>
+    <option value="Vancouver">Vancouver</option>
+    <option value="San Francisco">San Francisco</option>
+    <option value="New York">New York</option>
+    <option value="Chicago">Chicago</option>
+  </select>
+  <select class="form-control" name="status">
+    <option value="ontime">On Time</option>
+    <option value="delayed">Delayed</option>
+    <option value="canceled">Canceled</option>
+  </select>
+  <button class="btn btn-primary" type="submit" name="button">Submit</button>
+</form>
+
+<h4><a href="/">Return to the home page</a></h4>

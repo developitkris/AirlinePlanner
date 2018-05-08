@@ -152,6 +152,44 @@ namespace AirlinePlanner.Models
       return cities;
     }
 
+    public static Flight Find(int flightsId)
+    {
+        MySqlConnection conn = DB.Connection();
+        conn.Open();
+        var cmd = conn.CreateCommand() as MySqlCommand;
+        cmd.CommandText = @"SELECT * FROM flights WHERE id = (@searchId);";
+
+        MySqlParameter searchId = new MySqlParameter();
+        searchId.ParameterName = "@searchId";
+        searchId.Value = flightsId;
+        cmd.Parameters.Add(searchId);
+
+        var rdr = cmd.ExecuteReader() as MySqlDataReader;
+        int id = 0;
+        string flight_name = "";
+        string date = "";
+        string dept_city = "";
+        string arrival_city = "";
+        string status = "";
+
+        while(rdr.Read())
+        {
+          id = rdr.GetInt32(0);
+          flight_name = rdr.GetString(1);
+          date = rdr.GetString(2);
+          dept_city = rdr.GetString(3);
+          arrival_city = rdr.GetString(4);
+          status = rdr.GetString(5);
+        }
+        Flight newFlight = new Flight(flight_name, date, dept_city, arrival_city, status, id);
+        conn.Close();
+        if (conn != null)
+        {
+            conn.Dispose();
+        }
+        return newFlight;
+    }
+
     public static void DeleteAll()
     {
       MySqlConnection conn = DB.Connection();
