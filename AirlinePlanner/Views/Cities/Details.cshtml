@@ -1,0 +1,52 @@
+@{
+  Layout = "_Layout";
+}
+<h3>City: @Model["selectedCity"].GetName()</h3>
+<hr />
+@if (@Model["cityFlights"].Count != 0)
+{
+  <h4>This city has these flights:</h4>
+  <div>
+    @foreach (var flight in @Model["cityFlights"])
+    {
+      <div>
+        <ul>
+          <h4><strong>@flight.GetName()</strong></h4>
+          <li>Date: @flight.GetDate()</li>
+          <li>Departure City: @flight.GetDepartureCity()</li>
+          <li>Arrival City: @flight.GetArrivalCity()</li>
+          <li>Flight Status: @flight.GetStatus()</li>
+          <div class="row">
+            <div class="col-1">
+              <p>
+                <form class="form-group" action="/cities/delete" method="get">
+                  <button class="btn btn-primary" type="submit" name="button">Delete</button>
+                </form>
+              </p>
+            </div>
+            <div class="col-1">
+              <p>
+                <form class="form-group" action="/cities/update" method="get">
+                  <button class="btn btn-primary" type="submit" name="button">Update</button>
+                </form>
+              </p>
+            </div>
+          </div>
+        </ul>
+      </div>
+    }
+  </div>
+}
+<h4>Add a flight to this city:</h4>
+<form action='/cities/@Model["selectedCity"].GetCityId()/flights/new' method='post'>
+  <label for='flight-id'>Select a flight</label>
+  <select id='flight-id' name='flight-id' type='text'>
+    @foreach (var flight in @Model["allFlights"])
+    {
+      <option value='@flight.GetId()'>@flight.GetName()</option>
+    }
+  </select>
+  <button class="btn btn-primary" type='submit'>Submit</button>
+</form>
+<h5><a href="/cities/deleteall">Delete all cities</a></h5>
+<h5><a href="/">Return to home page</a></h5>

@@ -139,6 +139,10 @@ namespace AirlinePlanner.Models
         return newCity;
     }
 
+    public void UpdateCity(string newCity)
+    {
+      
+    }
     public void Delete()
     {
       MySqlConnection conn = DB.Connection();

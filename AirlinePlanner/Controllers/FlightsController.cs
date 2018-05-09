@@ -25,7 +25,7 @@ namespace AirlinePlanner.Controllers
     {
         Flight newFlight = new Flight(Request.Form["flight-name"], Request.Form["date"], Request.Form["dept-city"], Request.Form["arrival-city"], Request.Form["status"]);
         newFlight.Save();
-        return RedirectToAction("Success", "~/Flights/Index");
+        return RedirectToAction("Success", "Home");
     }
 
     [HttpGet("/flights/{id}")]
@@ -38,7 +38,38 @@ namespace AirlinePlanner.Controllers
       model.Add("selectedFlight", selectedFlight);
       model.Add("flightCities", flightCities);
       model.Add("allCities", allCities);
-      return View(model);
+      return View("Details", model);
+    }
+
+    [HttpPost("/flights/{flightId}/cities/new")]
+    public ActionResult AddCity(int flightId)
+    {
+      Flight flight = Flight.Find(flightId);
+      City city = City.Find(Int32.Parse(Request.Form["city-id"]));
+      flight.AddCitiesToFlights(city);
+      return RedirectToAction("Details",  new { id = flightId });
+    }
+
+    [HttpGet("/flights/{id}/update")]
+    public ActionResult UpdateFlight(int id)
+    {
+      Flight updateFlight = Flight.Find(id);
+
+      return RedirectToAction("Details", updateFlight);
+    }
+
+    [HttpGet("flights/delete")]
+    public ActionResult Delete()
+    {
+
+      return RedirectToAction("Index");
+    }
+
+    [HttpGet("/flights/deleteall")]
+    public ActionResult DeleteAll()
+    {
+      Flight.DeleteAll();
+      return RedirectToAction("Index");
     }
   }
 }

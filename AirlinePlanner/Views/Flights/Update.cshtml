@@ -1,12 +1,10 @@
 @{
   Layout = "_Layout";
 }
-<h3>Add Flight</h3>
-<br>
+<h3>Update Flight: @Model["selectedFlight"].GetName()</h3>
 <div class="row">
   <div class="col-md-4">
     <form class="form-group" action="/flights" method="post">
-      <label for="flight-name">Flight number:</label>
       <select class="form-control" name="flight-name">
         <option value="">Select flight</option>
         <option value="UA129">UA129</option>
@@ -16,11 +14,8 @@
         <option value="JB119">JB119</option>
         <option value="BR745">BR745</option>
       </select>
-      <br>
-      <label for="date">Date:</label>
-      <input class="form-control"type="date" name="date">
-      <br>
-      <label for="dept-city">Departure city:</label>
+      <label for="date"><em>Departure Date:</em></label>
+      <input type="date" name="date">
       <select class="form-control" name="dept-city">
         <option value="">Select departure city</option>
         <option value="Seattle">Seattle</option>
@@ -30,8 +25,6 @@
         <option value="New York">New York</option>
         <option value="Chicago">Chicago</option>
       </select>
-      <br>
-      <label for="arrival-city">Destination city:</label>
       <select class="form-control" name="arrival-city">
         <option value="">Select destination city</option>
         <option value="Seattle">Seattle</option>
@@ -41,8 +34,6 @@
         <option value="New York">New York</option>
         <option value="Chicago">Chicago</option>
       </select>
-      <br>
-      <label for="status">Flight status:</label>
       <select class="form-control" name="status">
         <option value="">Select flight status</option>
         <option value="Ontime">On Time</option>
@@ -54,5 +45,3 @@
     </form>
   </div>
 </div>
-
-<h5><a href="/">Return to the home page</a></h5>

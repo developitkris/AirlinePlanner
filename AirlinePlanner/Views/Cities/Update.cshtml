@@ -1,35 +1,27 @@
 @{
   Layout = "_Layout";
 }
-<h3>Add City</h3>
-<br>
+<h3>Update City: @Model["selectedCity"].GetName()</h3>
+
 <div class="row">
-  <div class="col-md-4">
+  <div class="col-md-6">
     <form class="form-group" action="/cities" method="post">
-      <label for="city-name">City name:</label>
       <select class="form-control" name="city-name">
-        <option value="">Select city</option>
         <option value="Seattle">Seattle</option>
-        <option value="Mexico City">Portland</option>
-        <option value="Vancouver">Los Angeles</option>
-        <option value="San Francisco">New York</option>
-        <option value="New York">Miami</option>
+        <option value="Portland">Portland</option>
+        <option value="Los Angeles">Los Angeles</option>
+        <option value="New York">New York</option>
+        <option value="Miami">Miami</option>
         <option value="Chicago">Chicago</option>
       </select>
-      <br>
-      <label for="airline">Airline:</label>
       <select class="form-control" name="airline-name">
-        <option value="">Select airline</option>
         <option value="United">United</option>
         <option value="Delta">Delta</option>
         <option value="Alaskan">Alaskan</option>
         <option value="Hawaiian">Hawaiian</option>
         <option value="JetBlue">JetBlue</option>
       </select>
-      <br>
       <button class="btn btn-primary" type="submit" name="button">Submit</button>
     </form>
   </div>
 </div>
-
-<h5><a href="/">Return to the home page</a></h5>

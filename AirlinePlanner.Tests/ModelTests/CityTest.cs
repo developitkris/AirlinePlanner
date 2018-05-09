@@ -57,5 +57,22 @@ namespace AirlinePlanner.Tests
          CollectionAssert.AreEqual(result, testList);
 
        }
+
+      //  [TestMethod]
+      //  public void Edit_UpdateCityDataInDatabase_Strings()
+      //  {
+      //    //Arrange
+      //    string firstCity = "Seattle";
+      //    City testCity = new City(firstCity);
+      //    testCity.Save();
+      //    string secondCity = "New York";
+       //
+      //    //Act
+      //    testCity.Update(secondCity);
+      //    string result = City.Find(testCity.GetCityId()).GetName();
+       //
+      //    //Assert
+      //    Assert.AreEqual(secondCity, result);
+      //  }
     }
 }

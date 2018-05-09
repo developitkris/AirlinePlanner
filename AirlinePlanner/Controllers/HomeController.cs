@@ -12,5 +12,11 @@ namespace AirlinePlanner.Controllers
     {
       return View();  //returns index view
     }
+
+    [HttpGet("/success")]
+    public ActionResult Success()
+    {
+        return View("Success");
+    }
   }
 }

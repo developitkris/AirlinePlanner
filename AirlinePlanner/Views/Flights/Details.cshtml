@@ -7,23 +7,58 @@
 @if (@Model["flightCities"].Count != 0)
 {
   <h4>Here are the associated cities for this flight:</h4>
-  <ul>
+  <div>
     @foreach (var city in @Model["flightCities"])
     {
-      <li>@city.GetName()</li>
+      <div>
+        <ul>
+          <li>Departure city: @city.GetName()</li>
+          <li>Airline: @city.GetAirline()</li>
+        </ul>
+        <div class="row">
+          <div class="col-1">
+            <p>
+              <form class="form-group" action="/flights/delete" method="get">
+                <button class="btn btn-primary" type="submit" name="button">Delete</button>
+              </form>
+            </p>
+          </div>
+          <div class="col-1">
+            <p>
+              <form class="form-group" action="/flights/update" method="get">
+                <button class="btn btn-primary" type="submit" name="button">Update</button>
+              </form>
+            </p>
+          </div>
+        </div>
+      </div>
     }
-  </ul>
+  </div>
 }
   <h4>Associate another city to this flight:</h4>
-  <form class="form-group" action="flights/@Model[selectedFlight].GetCityId()/cities/new" method="post">
-    <label for="city-id">Select a city</label>
-    <select id="city-id" name="city-id" type="text">
-        @foreach (var city in @Model["allCities"])
-        {
-          <option value="@city.GetCityId()">@city.GetName()</option>
-        }
-    </select>
-    <button type="submit" name="button">Submit</button>
+
+  <form class="form-group" action="/flights/@Model["selectedFlight"].GetId()/cities/new" method="post">
+    <div class="row">
+      <div class="col-3">
+        <label for="city-id">Select a city</label>
+        <select id="city-id" name="city-id" type="text">
+            @foreach (var city in @Model["allCities"])
+            {
+              <option value="@city.GetCityId()">@city.GetName()</option>
+            }
+        </select>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-2">
+        <button class="btn btn-primary" type="submit" name="button">Submit</button>
+
+      </div>
+    </div>
+
   </form>
 
-  <p><a href="/">Return to the home page</a></p>
+  <h5><a href="/flights/deleteall">Delete all flights</a></h5>
+  <h5><a href="/cities/new">Add a new city</a></h5>
+  <h5><a href="/">Return to the home page</a></h5>
