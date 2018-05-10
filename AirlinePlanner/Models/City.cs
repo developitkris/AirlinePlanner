@@ -141,7 +141,7 @@ namespace AirlinePlanner.Models
 
     public void UpdateCity(string newCity)
     {
-      
+
     }
     public void Delete()
     {
@@ -158,9 +158,10 @@ namespace AirlinePlanner.Models
       cmd.Parameters.Add(cityIdParameter);
 
       cmd.ExecuteNonQuery();
+      conn.Close();
       if (conn != null)
       {
-        conn.Close();
+        conn.Dispose();
       }
     }
 
